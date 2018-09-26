@@ -87,14 +87,24 @@ typedef struct _ImgInfo_s
 */
 
 
+enum eLogType
+  {
+    elt_PChar,
+    elt_AnsiString,
+    elt_ItemV1,
+    elt_ItemV2,
+    elt_End
+  };
+
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
-  TListBox *ListBox1;
+  TListBox *LsBxLog;
   TButton *Button1;
   void __fastcall Button1Click(TObject *Sender);
 private:	// User declarations
-  void __fastcall LogItmV2(ItemInfo_V2 *pItem);
+  void _fastcall LogIt(AnsiString sText);
+  void _fastcall LogIt(eLogType Type, HANDLE pData);
 public:		// User declarations
   __fastcall TForm1(TComponent* Owner);
 };

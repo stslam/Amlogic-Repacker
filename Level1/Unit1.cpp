@@ -41,21 +41,54 @@ __u32 checkcum_32(const unsigned char *buf, __u32 len)
 }
 */
 //---------------------------------------------------------------------------
-void __fastcall TForm1::LogItmV2(ItemInfo_V2 *pItem)
+void _fastcall TForm1::LogIt(eLogType Type, HANDLE pData)
 {
         AnsiString s;
-s = "Id " + AnsiString(pItem->itemId)+
-    " FT:   " + AnsiString(pItem->fileType)+
-    " MT:   " + AnsiString(pItem->itemMainType)+
-    " ST:   " + AnsiString(pItem->itemSubType)+
-    " IOFS: " + AnsiString(pItem->curoffsetInItem)+
-    " FOFS: " + AnsiString(pItem->offsetInImage)+
-    " SZ:   " + AnsiString(pItem->itemSz);
-ListBox1->Items->Add(s);
+LsBxLog->Items->BeginUpdate();
+
+//if(LsBxLog->Items->Count)
+// LsBxLog->Items->Add("");
+
+  switch (Type)
+  {
+    case elt_PChar:
+     s = AnsiString((char *)pData);
+    break;
+
+    case elt_AnsiString:
+     s = *(AnsiString*)pData;
+    break;
+
+    case elt_ItemV1:
+     s = "ToDo";
+    break;
+
+    case elt_ItemV2:
+     {
+      ItemInfo_V2 *pItem = (ItemInfo_V2 *)pData;
+      s = AnsiString(pItem->itemId)+". \""+AnsiString(pItem->itemSubType)+"."+
+      AnsiString(pItem->itemMainType)+"\" (FileType is "+AnsiString(pItem->fileType)+")";
+      LsBxLog->Items->Add(s);
+      s = "Offset "+ AnsiString(pItem->offsetInImage)+" + "+AnsiString(pItem->curoffsetInItem)+" = "+
+      AnsiString(pItem->offsetInImage+pItem->curoffsetInItem)+", size "+AnsiString(pItem->itemSz);
+     }
+    break;
+
+    default:
+    s = "FixMe!!!";
+  }
+LsBxLog->Items->Add(s);
+//LsBxLog->Items->Add("");
+LsBxLog->Selected[LsBxLog->Items->Count-1] = true;
+//LsBxLog->Selected[LsBxLog->Items->Count-1] = false;
+LsBxLog->Items->EndUpdate();
 }
 //---------------------------------------------------------------------------
+void _fastcall TForm1::LogIt(AnsiString sText)
+{
+  LogIt(elt_AnsiString, (HANDLE*)&sText);
+}
 
-//---------------------------------------------------------------------------
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
         TFileStream *fsImg;
@@ -75,16 +108,31 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
         AnsiString sFile;
 
   sOutPath = "D:\\MINIX\\FWWORK\\LEVEL1";
+  sFile    = "D:\\MINIX\\ZZZ\\S912-v008-20180209.img";
+  LogIt("Start LEVEL_1");
 
+  LogIt("Open "+sFile);//(HANDLE*)&AnsiString(
 
-  fsImg = new TFileStream("D:\\MINIX\\ZZZ\\S912-v008-20180209.img", fmOpenRead|fmShareDenyNone);
+  fsImg = new TFileStream(sFile, fmOpenRead|fmShareDenyNone);
   LenIMG = fsImg->Size;
+  LogIt("Read header");
   fsImg->Read(&HdrImg, sizeof(HdrImg));
   bOK  = (HdrImg.imageSz == LenIMG);
   bOK &= (HdrImg.version == 2 || HdrImg.version == 1);
-  if(!bOK)
-   return;
+  if(bOK)
+   {
+    LogIt("Size correct, u-boot file version is "+AnsiString(HdrImg.version));
+    LogIt("Number of files detected: "+AnsiString(HdrImg.itemsCnt));
+   }
+  else
+   {
+    LogIt("Error");
+    delete fsImg;
+    return;
+   }
 
+  LogIt("Extracting");
+  LogIt("Create folder " + sOutPath);
   ForceDirectories(sOutPath);
 
   if(HdrImg.version == 2)
@@ -96,12 +144,13 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
 
     for(i = 0; i<HdrImg.itemsCnt; i++)
      {
-      LogItmV2(&pItemsV2[i]);
+      LogIt(elt_ItemV2, &pItemsV2[i]);
       fsImg->Position = pItemsV2[i].offsetInImage+pItemsV2[i].curoffsetInItem;
       sFile = sOutPath+"\\"+AnsiString(pItemsV2[i].itemSubType)+"."+AnsiString(pItemsV2[i].itemMainType);
       fsOut = new TFileStream(sFile, fmCreate);
       fsOut->CopyFrom(fsImg, pItemsV2[i].itemSz);
       delete fsOut;
+      LogIt("Extracted as: "+AnsiString(sFile));
      }
     delete []pItemsV2;
    }
@@ -118,6 +167,9 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
      }
     delete []pItemsV1;
    }
-  
+
+   delete fsImg;
+
+  LogIt("DONE: LEVEL_1");
 }
 //---------------------------------------------------------------------------

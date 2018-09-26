@@ -13,7 +13,7 @@ object Form1: TForm1
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object ListBox1: TListBox
+  object LsBxLog: TListBox
     Left = 0
     Top = 0
     Width = 422
