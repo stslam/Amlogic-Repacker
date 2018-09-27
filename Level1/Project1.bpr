@@ -4,11 +4,11 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="Project1.exe"/>
-    <OBJFILES value="Project1.obj Unit1.obj"/>
+    <OBJFILES value="Project1.obj Unit1.obj uDTB.obj uxCRC32.obj uSubRoutines.obj"/>
     <RESFILES value="Project1.res"/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) Unit1.dfm"/>
-    <LIBFILES value=""/>
+    <LIBFILES value="..\..\..\Lib\Psdk\shlwapi.lib"/>
     <LIBRARIES value=""/>
     <SPARELIBS value="vcl.lib rtl.lib vclx.lib"/>
     <PACKAGES value="vcl.bpi rtl.bpi vclx.bpi ZAsm.bpi ZCOMP.bpi ztab.bpi"/>
@@ -22,8 +22,8 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="Project1.cpp"/>
-    <INCLUDEPATH value="$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;e:\basprg\target;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="$(BCB)\Projects\MINIXBAK\Level1;$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\Projects\MINIXBAK\Level1;$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;e:\basprg\target;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
@@ -46,6 +46,10 @@
       <FILE FILENAME="Project1.res" FORMNAME="" UNITNAME="Project1.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="Project1.cpp" FORMNAME="" UNITNAME="Project1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="Unit1.cpp" FORMNAME="Form1" UNITNAME="Unit1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="uDTB.cpp" FORMNAME="" UNITNAME="uDTB" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="uxCRC32.cpp" FORMNAME="" UNITNAME="uxCRC32" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="uSubRoutines.cpp" FORMNAME="" UNITNAME="uSubRoutines" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\Lib\Psdk\shlwapi.lib" FORMNAME="" UNITNAME="shlwapi.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

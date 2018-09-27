@@ -3,10 +3,17 @@
 #ifndef Unit1H
 #define Unit1H
 //---------------------------------------------------------------------------
+#include "uSubRoutines.h"
+#include "uxCRC32.h"
+#include "uDTB.h"
+#include <shlwapi.h>
+#include <IniFiles.hpp>
+
 #include <Classes.hpp>
+#include <ComCtrls.hpp>
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
-#include <Forms.hpp>
+#include <Dialogs.hpp>
 //---------------------------------------------------------------------------
 typedef unsigned     int  __u32;
 typedef unsigned __int64  __u64;
@@ -99,12 +106,45 @@ enum eLogType
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
+  TPageControl *PG_Ctl;
+  TTabSheet *ts_Lvl1;
+  TTabSheet *ts_Lvl2;
+  TTabSheet *ts_Log;
   TListBox *LsBxLog;
-  TButton *Button1;
-  void __fastcall Button1Click(TObject *Sender);
+  TButton *Button3;
+  TButton *Button2;
+  TEdit *Ed_ImgFile;
+  TButton *Btn_FWImgSel;
+  TLabel *Label1;
+  TButton *Btn_UnpLvl1;
+  TCheckBox *ChkBx_SrcCrc32;
+  TLabel *Label2;
+  TEdit *Ed_TargetDir;
+  TButton *Btn_SelDest;
+  TListBox *LsBx_FilesL1;
+  TOpenDialog *OpenDialog;
+  TCheckBox *ChkBx_CleanWarn;
+  void __fastcall Button2Click(TObject *Sender);
+  void __fastcall Btn_UnpLvl1Click(TObject *Sender);
+  void __fastcall PG_CtlChanging(TObject *Sender, bool &AllowChange);
+  void __fastcall PG_CtlChange(TObject *Sender);
+  void __fastcall LsBx_FilesL1Click(TObject *Sender);
+  void __fastcall FormCreate(TObject *Sender);
+  void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+  void __fastcall Btn_SelDestClick(TObject *Sender);
+  void __fastcall Btn_FWImgSelClick(TObject *Sender);
+  void __fastcall OpenDialogShow(TObject *Sender);
+  void __fastcall Ed_TargetDirChange(TObject *Sender);
+  void __fastcall Button3Click(TObject *Sender);
 private:	// User declarations
+  TIniFile *pIni;
+
   void _fastcall LogIt(AnsiString sText);
   void _fastcall LogIt(eLogType Type, HANDLE pData);
+  void _fastcall Refill_LsBx_FilesL1(void);
+  //params
+  AnsiString   sDestRoot;
+
 public:		// User declarations
   __fastcall TForm1(TComponent* Owner);
 };
