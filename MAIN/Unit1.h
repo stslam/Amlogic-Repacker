@@ -111,8 +111,6 @@ __published:	// IDE-managed Components
   TTabSheet *ts_Lvl2;
   TTabSheet *ts_Log;
   TListBox *LsBxLog;
-  TButton *Button3;
-  TButton *Button2;
   TEdit *Ed_ImgFile;
   TButton *Btn_FWImgSel;
   TLabel *Label1;
@@ -123,25 +121,29 @@ __published:	// IDE-managed Components
   TButton *Btn_SelDest;
   TListBox *LsBx_FilesL1;
   TOpenDialog *OpenDialog;
+  TLabel *Lbl_DstLegend;
+  TButton *Button2;
+  TButton *Btn_ClearDest;
   TCheckBox *ChkBx_CleanWarn;
   void __fastcall Button2Click(TObject *Sender);
   void __fastcall Btn_UnpLvl1Click(TObject *Sender);
   void __fastcall PG_CtlChanging(TObject *Sender, bool &AllowChange);
   void __fastcall PG_CtlChange(TObject *Sender);
-  void __fastcall LsBx_FilesL1Click(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
   void __fastcall Btn_SelDestClick(TObject *Sender);
   void __fastcall Btn_FWImgSelClick(TObject *Sender);
   void __fastcall OpenDialogShow(TObject *Sender);
   void __fastcall Ed_TargetDirChange(TObject *Sender);
-  void __fastcall Button3Click(TObject *Sender);
+  void __fastcall Btn_ClearDestClick(TObject *Sender);
 private:	// User declarations
   TIniFile *pIni;
 
+  void _fastcall SetVisibleTabs(int From);
   void _fastcall LogIt(AnsiString sText);
   void _fastcall LogIt(eLogType Type, HANDLE pData);
   void _fastcall Refill_LsBx_FilesL1(void);
+
   //params
   AnsiString   sDestRoot;
 

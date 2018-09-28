@@ -96,9 +96,14 @@ void __fastcall TForm1::Btn_UnpLvl1Click(TObject *Sender)
         AnsiString   sOutPath;
 
   PG_Ctl->ActivePage = ts_Log;
-  LogIt("Start LEVEL_1");
+  LogIt("Start LEVEL_1. (YMD)"+Now().FormatString("YYYY/MM/DD HH:NN:SS.ZZZ"));
   sDestRoot = Ed_TargetDir->Text.Trim();
   sOutPath = sDestRoot+"\\LEVEL1";
+  if(!DoEmptyFolder(sOutPath, ChkBx_CleanWarn->Checked))
+   {
+    LogIt("Err. Can't clear the folder \""+sOutPath+"\" (or user unsure)");
+    goto m_End;
+   }
   sFile    = Ed_ImgFile->Text.Trim();
   sFile    = "D:\\MINIX\\ZZZ\\S912-v008-20180209.img";
 
@@ -197,40 +202,54 @@ void __fastcall TForm1::Btn_UnpLvl1Click(TObject *Sender)
     delete []pItemsV1;
    }
 
-
+ LogIt("...slicing is done. Everything looks fine.");
  m_Cleanup:
   delete fsImg;
  m_End:
-  LogIt("DONE: LEVEL_1");
-// if(
+  LogIt("DONE: LEVEL_1"+Now().FormatString("YYYY/MM/DD HH:NN:SS.ZZZ"));
+ Ed_TargetDirChange(Ed_TargetDir);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::PG_CtlChanging(TObject *Sender, bool &AllowChange)
 {
-//  
+//
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::PG_CtlChange(TObject *Sender)
 {
-if(PG_Ctl->ActivePage == ts_Lvl2)
- {
-  Refill_LsBx_FilesL1();
- }
-}
-//---------------------------------------------------------------------------
-void __fastcall TForm1::LsBx_FilesL1Click(TObject *Sender)
-{
-//
+  bool bCan2 = (IsDirEmpty(sDestRoot) == ERROR_DIR_NOT_EMPTY);
+
+ if(PG_Ctl->ActivePage == ts_Lvl2)
+  {
+
+   if(bCan2)
+    Refill_LsBx_FilesL1();
+   else
+    {
+     PG_Ctl->ActivePage = ts_Lvl1;
+     ts_Lvl2->TabVisible = false;
+    }
+  }
 }
 //---------------------------------------------------------------------------
 void _fastcall TForm1::Refill_LsBx_FilesL1(void)
 {
         TStringList *sl;
+        AnsiString s;
+        int i;
+  LsBx_FilesL1->Items->Clear();
   sl = new TStringList;
-  xGetFileList(sDestRoot + "\\LEVEL1\\", "*.*", sl);
-  LsBx_FilesL1->Items->Assign(sl);
+  if(xGetFileList(sDestRoot + "\\LEVEL1\\", "*.*", sl))
+   {
+    LsBx_FilesL1->Items->BeginUpdate();
+    for(i = 0; i<sl->Count; i++)
+     {
+      LsBx_FilesL1->Items->Add(ExtractFileName(sl->Strings[i]));
+     }
+    LsBx_FilesL1->Items->EndUpdate(); 
+   }
   delete sl;
 }
 //---------------------------------------------------------------------------
@@ -255,6 +274,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
   ChkBx_CleanWarn->Checked = pIni->ReadBool("MAIN", "WARNCLRTARGET", true);
   Ed_TargetDirChange(Ed_TargetDir);
 //  sDestRoot = "D:\MINIX\FWWORK";
+
 }
 //---------------------------------------------------------------------------
 
@@ -334,23 +354,51 @@ void __fastcall TForm1::OpenDialogShow(TObject *Sender)
 void __fastcall TForm1::Ed_TargetDirChange(TObject *Sender)
 {
         AnsiString s;
-s = Ed_TargetDir->Text.Trim();
-if(DirectoryExists(s))
-{
- if(PathIsDirectoryEmpty(s.c_str()))
-  Ed_TargetDir->ParentFont = true;
- else
-  Ed_TargetDir->Font->Color = clBlue;
-}
-else
- Ed_TargetDir->Font->Color = clRed;
-//
+        DWORD      dwState;
+ s       = Ed_TargetDir->Text.Trim();
+ dwState = IsDirEmpty(s);
+ switch (dwState)
+ {
+  case ERROR_DIR_NOT_EMPTY: //NOT empty
+   Lbl_DstLegend->Font->Color = clBlue;
+   Ed_TargetDir->Font->Color  = clBlue;
+   SetVisibleTabs(2);
+  break;
+  case ERROR_NO_MORE_FILES: //empty
+   Lbl_DstLegend->ParentFont = true;
+   Ed_TargetDir->ParentFont  = true;
+   SetVisibleTabs(0);
+  break;
+  default: //ERROR_PATH_NOT_FOUND - not eixsts
+   Ed_TargetDir->Font->Color = clRed;
+   Ed_TargetDir->Font->Color = clRed;
+   SetVisibleTabs(0);
+ }
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button3Click(TObject *Sender)
+void __fastcall TForm1::Btn_ClearDestClick(TObject *Sender)
 {
-  DoEmptyFolder("D:\\MINIX\\FWWORK");
+        bool bDone;
+  bDone = DoEmptyFolder("D:\\MINIX\\FWWORK", true/*ChkBx_CleanWarn->Checked*/);
+  Ed_TargetDirChange(Ed_TargetDir);
+ if(bDone)
+  AttentionMsg("Done");
 }
 //---------------------------------------------------------------------------
+void _fastcall TForm1::SetVisibleTabs(int From)
+{
+  bool bCan2;
+  bool bCan3;
+
+ if(From)
+  {
+   ts_Lvl2->TabVisible = true;
+  }
+ else
+  {
+   ts_Lvl2->TabVisible = false;
+  }
+
+}
 

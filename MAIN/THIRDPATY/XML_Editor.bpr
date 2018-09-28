@@ -3,17 +3,16 @@
 <PROJECT>
   <MACROS>
     <VERSION value="BCB.06.00"/>
-    <PROJECT value="Project1.exe"/>
-    <OBJFILES value="Project1.obj Unit1.obj uDTB.obj uxCRC32.obj uSubRoutines.obj 
-      ..\THIRDPATY\TinyXML2\tinyxml2.obj"/>
-    <RESFILES value="Project1.res"/>
+    <PROJECT value="XML_Editor.exe"/>
+    <OBJFILES value="XML_Editor.obj uXMLEditor.obj TinyXML2\tinyxml2.obj"/>
+    <RESFILES value="XML_Editor.res"/>
     <DEFFILE value=""/>
-    <RESDEPEN value="$(RESFILES) Unit1.dfm"/>
+    <RESDEPEN value="$(RESFILES) uXMLEditor.dfm"/>
     <LIBFILES value=""/>
     <LIBRARIES value=""/>
     <SPARELIBS value="vcl.lib rtl.lib vclx.lib"/>
     <PACKAGES value="vcl.bpi rtl.bpi vclx.bpi ZAsm.bpi ZCOMP.bpi ztab.bpi"/>
-    <PATHCPP value=".;..\THIRDPATY\TinyXML2"/>
+    <PATHCPP value=".;TinyXML2"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
@@ -22,9 +21,9 @@
     <LINKER value="ilink32"/>
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
-    <MAINSOURCE value="Project1.cpp"/>
-    <INCLUDEPATH value="$(BCB)\Projects\MINIX\THIRDPATY\TinyXML2;$(BCB)\Projects\MINIXBAK\Level1;$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="$(BCB)\Projects\MINIX\THIRDPATY\TinyXML2;$(BCB)\Projects\MINIXBAK\Level1;$(BCB)\Projects;$(BCB)\Projects\MINIX\Proper;e:\basprg\target;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <MAINSOURCE value="XML_Editor.cpp"/>
+    <INCLUDEPATH value="$(BCB)\Projects\MINIX\THIRDPATY\TinyXML2;$(BCB)\Projects;$(BCB)\Projects\MINIX\THIRDPATY;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\Projects\MINIX\THIRDPATY\TinyXML2;$(BCB)\Projects;$(BCB)\Projects\MINIX\THIRDPATY;e:\basprg\target;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
@@ -33,7 +32,7 @@
       -c -tW -tWM"/>
     <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /mv24 /m5 /kh16384 /w2 /zi"/>
+    <AFLAGS value="/mx /mv24 /m5 /kh16384 /w2 /zd"/>
     <LFLAGS value="-D&quot;&quot; -Rr -Gz -aa -Tpe -x -Gn -v"/>
     <OTHERFILES value=""/>
   </OPTIONS>
@@ -44,13 +43,10 @@
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
-      <FILE FILENAME="Project1.res" FORMNAME="" UNITNAME="Project1.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="Project1.cpp" FORMNAME="" UNITNAME="Project1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="Unit1.cpp" FORMNAME="Form1" UNITNAME="Unit1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="uDTB.cpp" FORMNAME="" UNITNAME="uDTB" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="uxCRC32.cpp" FORMNAME="" UNITNAME="uxCRC32" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="uSubRoutines.cpp" FORMNAME="" UNITNAME="uSubRoutines" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\THIRDPATY\TinyXML2\tinyxml2.cpp" FORMNAME="" UNITNAME="tinyxml2" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="XML_Editor.res" FORMNAME="" UNITNAME="XML_Editor.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="XML_Editor.cpp" FORMNAME="" UNITNAME="XML_Editor" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="uXMLEditor.cpp" FORMNAME="Form1" UNITNAME="uXMLEditor" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="TinyXML2\tinyxml2.cpp" FORMNAME="" UNITNAME="tinyxml2" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -84,30 +80,30 @@ ProductVersion=1.0.0.0
 Comments=
 
 [Excluded Packages]
-c:\bcb\bcb6\Bin\dclact60.bpl=Borland ActionBar Components
-c:\bcb\bcb6\Bin\dclite60.bpl=Borland Integrated Translation Environment
 c:\bcb\bcb6\Bin\dclbcbsmp60.bpl=Borland Sample Controls Design Time Package
-C:\BCB\BCB6\Bin\dcldb60.bpl=Borland Database Components
+c:\bcb\bcb6\Bin\dclado60.bpl=Borland ADO DB Components
 c:\bcb\bcb6\Bin\dclqrt60.bpl=QuickReport Components
 c:\bcb\bcb6\Bin\dclbde60.bpl=Borland BDE DB Components
-C:\BCB\BCB6\Bin\dclmid60.bpl=Borland MyBase DataAccess Components
+c:\bcb\bcb6\Bin\dclcds60.bpl=Borland Base Cached ClientDataset Component
+c:\bcb\bcb6\Bin\dclbdecds60.bpl=Borland Local BDE ClientDataset Components
+c:\bcb\bcb6\Bin\dcldb60.bpl=Borland Database Components
 c:\bcb\bcb6\Bin\dcltee60.bpl=TeeChart Components
 c:\bcb\bcb6\Bin\dcltqr60.bpl=TeeChart for QuickReport Components
 c:\bcb\bcb6\Bin\dclib60.bpl=InterBase Data Access Components
 c:\bcb\bcb6\Bin\dclclxdb60.bpl=Borland CLX Database Components
-C:\BCB\BCB6\Bin\dclclxstd60.bpl=Borland CLX Standard Components
+c:\bcb\bcb6\Bin\dclclxstd60.bpl=Borland CLX Standard Components
+c:\bcb\bcb6\Bin\dclmid60.bpl=Borland MyBase DataAccess Components
+c:\bcb\bcb6\Bin\dclact60.bpl=Borland ActionBar Components
 c:\bcb\bcb6\Bin\dclnet60.bpl=Borland Internet Components
 c:\bcb\bcb6\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 c:\bcb\bcb6\Bin\DCLNMF60.bpl=NetMasters Fastnet Tools
 c:\bcb\bcb6\Bin\bcbie60.bpl=Borland C++Builder Internet Explorer 5 Components Package
 c:\bcb\bcb6\Bin\dclsoap60.bpl=Borland SOAP Components
 c:\bcb\bcb6\Bin\dclocx60.bpl=Borland Sample Imported ActiveX Controls
+c:\bcb\bcb6\Bin\dclite60.bpl=Borland Integrated Translation Environment
 c:\bcb\bcb6\Bin\dcldbx60.bpl=Borland dbExpress Components
-c:\bcb\bcb6\Bin\bcb97axserver60.bpl=Borland C++Builder COM Server Components Sample Package
-c:\bcb\bcb6\Bin\dclado60.bpl=Borland ADO DB Components
-c:\bcb\bcb6\Bin\dclcds60.bpl=Borland Base Cached ClientDataset Component
-c:\bcb\bcb6\Bin\dclbdecds60.bpl=Borland Local BDE ClientDataset Components
 c:\bcb\bcb6\Bin\dcldbxcds60.bpl=Borland Local DBX ClientDataset Components
+c:\bcb\bcb6\Bin\bcb97axserver60.bpl=Borland C++Builder COM Server Components Sample Package
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

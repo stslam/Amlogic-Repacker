@@ -57,7 +57,9 @@ void _fastcall xGetDirList (AnsiString InitialPath, TStringList *slDirs)
 
 
 
-
+/*
+browse directory section
+*/
 struct sMyBrowseParam
 {
         AnsiString   Key;
@@ -172,24 +174,27 @@ AnsiString _fastcall BrDr(AnsiString Prompt, bool bCanCreateFolder, HWND hwnd )
 }
 
 
+
+
 /*
- DELETE ALL CONTENT in the sFolderToEmpty
+DELETE ALL CONTENT in the sFolderToEmpty without any warnings
+
+NB. The root folder will remain according to the logic of the algorithm
+    everything else (inside root sFolder) will be deleted!
 */
-bool _fastcall DoEmptyFolder(AnsiString sFolderToEmpty)
+bool _fastcall DoEmptyFolder(AnsiString sFolder)
 {
         TSearchRec sr;
         AnsiString s;
         bool bOK = true;
 
-//s = sFolderToEmpty+"\\*.*";
-
-if(FindFirst(sFolderToEmpty+"\\*.*", 0xFFFFFFFF, sr) == 0)
+if(FindFirst(sFolder+"\\*.*", 0xFFFFFFFF, sr) == 0)
  {
   do
    {
     if (sr.Name != "." && (sr.Name) != ".." )
      {
-      s = sFolderToEmpty+"\\"+sr.Name;
+      s = sFolder+"\\"+sr.Name;
       if(sr.Attr&faDirectory)
         {
          if(!DoEmptyFolder(s))
@@ -207,11 +212,155 @@ if(FindFirst(sFolderToEmpty+"\\*.*", 0xFFFFFFFF, sr) == 0)
   FindClose(sr);
  }
 return bOK;
+}//bool _fastcall DoEmptyFolder(AnsiString sFolder)
+
+
+/*
+Clean folder contents with warning before (if exists and if bWarnBefore==true)
+
+NB. The root folder will remain according to the logic of the algorithm
+    everything else (inside root sFolder) will be deleted!
+*/
+bool _fastcall DoEmptyFolder(AnsiString sFolder, bool bWarnBefore)
+{
+        DWORD dwState;
+
+ if(IsDirEmpty(sFolder) == ERROR_DIR_NOT_EMPTY)
+  if(!bWarnBefore || YesNoQuestion("Delete ALL the contents of the folder:\n\""+sFolder+"\"\nSeriosly?\nAre You REALLY sure?"))
+   {
+    if(!DoEmptyFolder(sFolder) && IsDirEmpty(sFolder) == ERROR_DIR_NOT_EMPTY)
+     {
+      if(YesNoQuestion("After cleaning, the folder still is not empty.\nDo You want to clean it manually?"))
+         ExtExplore(sFolder);
+     }
+   }
+
+ dwState = IsDirEmpty(sFolder);
+ switch (dwState)
+ {
+  case ERROR_NO_MORE_FILES: //empty, (bool)dwState == true
+  break;
+
+  case ERROR_DIR_NOT_EMPTY: //NOT empty, (bool)dwState == false
+   dwState = 0;
+  break;
+
+  default: //ERROR_PATH_NOT_FOUND - not eixsts
+   {
+    dwState = ForceDirectories(sFolder);//dependent
+    if(!dwState)
+     CritErrMsg("Can't create the folder \""+sFolder+"\"");
+   }
+ }
+
+ return (bool)dwState;
+}//bool _fastcall DoEmptyFolder(AnsiString sFolder, bool bWarnBefore)
+
+
+
+
+/* Check the folder state
+
+return values = mean:
+ ERROR_NO_MORE_FILES  = FOLDER IS EMPTY
+ ERROR_DIR_NOT_EMPTY  = FOLDER IS NOT EMPTY
+ ERROR_PATH_NOT_FOUND = FOLDER IS'NT EXISTS
+*/
+DWORD _fastcall IsDirEmpty(AnsiString sLookFolder)
+{
+        TSearchRec sr;
+        DWORD dwRet = ERROR_NO_MORE_FILES; //ERROR_SUCCESS
+
+ if(FindFirst(sLookFolder + "\\*.*", 0xFFFFFFFF, sr) == 0)
+ {
+  do
+   {
+    if (sr.Name[1] != '.')
+     {
+       dwRet = ERROR_DIR_NOT_EMPTY;
+       break;
+     }
+   }
+  while (FindNext(sr) == 0);
+  FindClose(sr);
+ }
+ else
+  dwRet = ERROR_PATH_NOT_FOUND;
+
+return dwRet;
 }//bool _fastcall DoEmptyFolder(AnsiString sFolderToEmpty)
 
-
-
-bool _fastcall DoEmptyFolder(AnsiString sFolderToDel, bool bWarnBefore)
+//------------------------------------------------------------------------------
+// Message dialogs section
+//------------------------------------------------------------------------------
+bool _fastcall YesNoQuestion(AnsiString sMsg)
 {
-
+          static char *pMsgCapt = "Question";
+ if (IDYES == MessageBox(NULL, sMsg.c_str(), pMsgCapt, MB_YESNO | MB_ICONQUESTION | MB_SYSTEMMODAL | MB_DEFBUTTON2 ))
+  return true;
+return false;
 }
+//------------------------------------------------------------------------------
+void _fastcall AttentionMsg(AnsiString sMsg)
+{
+        static char *pMsgCapt = "Attention!";
+ MessageBox(NULL, sMsg.c_str(), pMsgCapt, MB_OK | MB_ICONINFORMATION | MB_SYSTEMMODAL);
+}
+
+void _fastcall ErrorMsg(AnsiString sMsg)
+{
+        static char *pMsgCapt = "Error!";
+ MessageBox(NULL, sMsg.c_str(), pMsgCapt,  MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+}
+/*
+Also produce interpretation of GetLastError meaning
+and HEX representation of this value
+*/
+void _fastcall CritErrMsg(AnsiString sMsg)
+{
+        AnsiString sTx;
+        static char *pMsgCapt = "CRITICAL error!!!";
+
+        DWORD      dwErr;
+        char     * pBuf = NULL;
+        int        BufLen;
+
+dwErr  = GetLastError();
+BufLen = FormatMessage(
+                         FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_ALLOCATE_BUFFER,	// source and processing options
+                         NULL ,	// pointer to  message source
+                         dwErr,	// requested message identifier
+                         0,	// language identifier for requested message
+                         (LPSTR)&pBuf,	// pointer to message buffer
+                         0,	// maximum size of message buffer
+                         NULL 	// address of array of message inserts
+                        );
+
+ if(pBuf && BufLen)
+  {
+   sTx = "Error 0x"+IntToHex((int)dwErr, 8)+": "+AnsiString(pBuf);
+   GlobalFree(pBuf);
+  }
+ else
+   sTx = " Unknown error: 0x"+IntToHex((int)dwErr, 8);
+
+ if(sMsg.Length())
+  sTx = sMsg + "\n" + sTx;
+
+ MessageBox(NULL, sTx.c_str(), pMsgCapt, MB_OK| MB_ICONSTOP | MB_SYSTEMMODAL);
+}
+
+
+/*
+Open external program for sFolder
+*/
+bool _fastcall ExtExplore(AnsiString sFolder)
+{
+ if((HINSTANCE)33 > ShellExecute(NULL,"explore", sFolder.c_str(), NULL, NULL, SW_SHOWMAXIMIZED))
+  {
+   ErrorMsg("Can't explore \""+sFolder+"\"");
+   return false;
+  }
+ return true;
+}
+
